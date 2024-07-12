@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
+<<<<<<< HEAD
 	<name>sistemaGestaoAbrigosCompassUol</name>
+=======
+	<name>desafio1</name>
+>>>>>>> branch 'master' of https://github.com/wwpedro/sistema-gestao-doacao-para-brigos-compassuol.git
 	<comment></comment>
 	<projects>
 	</projects>
