@@ -2,16 +2,20 @@ package main;
 
 import java.util.Optional;
 import java.util.Scanner;
+import javax.persistence.EntityManager;
 import entities.CentroDistribuicao;
 import services.CentroDistribuicaoService;
+import utils.JPAUtil;
 
 public class MenuCentroDistribuicao {
     private Scanner scanner;
     private CentroDistribuicaoService centroService;
+    private EntityManager em;
 
     public MenuCentroDistribuicao(Scanner scanner) {
         this.scanner = scanner;
-        this.centroService = new CentroDistribuicaoService();
+        this.em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        this.centroService = new CentroDistribuicaoService(em);
     }
 
     public void registrarCentro() {

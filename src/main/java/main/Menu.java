@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Scanner;
+import utils.JPAUtil;
 
 public class Menu {
     private Scanner scanner;
@@ -75,6 +76,7 @@ public class Menu {
                     break;
                 case 0:
                     System.out.println("Programa encerrado");
+                    JPAUtil.close(); 
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");

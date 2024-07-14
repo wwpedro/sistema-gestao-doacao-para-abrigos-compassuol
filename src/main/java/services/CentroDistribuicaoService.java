@@ -1,41 +1,48 @@
 package services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import entities.CentroDistribuicao;
 
 public class CentroDistribuicaoService {
-    private List<CentroDistribuicao> centros = new ArrayList<>();
-    
+    private EntityManager em;
+
+    public CentroDistribuicaoService(EntityManager em) {
+        this.em = em;
+    }
+
     public void registrarCentroDistribuicao(CentroDistribuicao centro) {
-        centros.add(centro);
+        em.getTransaction().begin();
+        em.persist(centro);
+        em.getTransaction().commit();
     }
-    
+
     public List<CentroDistribuicao> listarCentros() {
-        return centros;
+        TypedQuery<CentroDistribuicao> query = em.createQuery("FROM CentroDistribuicao", CentroDistribuicao.class);
+        return query.getResultList();
     }
-    
+
     public Optional<CentroDistribuicao> encontrarCentroDistribuicaoPorNome(String nome) {
-        return centros.stream().filter(c -> c.getNome().equals(nome)).findFirst();
+        TypedQuery<CentroDistribuicao> query = em.createQuery("FROM CentroDistribuicao c WHERE c.nome = :nome", CentroDistribuicao.class);
+        query.setParameter("nome", nome);
+        return query.getResultList().stream().findFirst();
     }
-    
+
     public void editarCentroDistribuicao(String nome, CentroDistribuicao centroAtualizado) {
-        encontrarCentroDistribuicaoPorNome(nome).ifPresent(centro -> {
-            if (centroAtualizado.getNome() != null && !centroAtualizado.getNome().isEmpty()) {
-                centro.setNome(centroAtualizado.getNome());
-            }
-            if (centroAtualizado.getEndereco() != null && !centroAtualizado.getEndereco().isEmpty()) {
-                centro.setEndereco(centroAtualizado.getEndereco());
-            }
-            if (centroAtualizado.getTelefone() != null && !centroAtualizado.getTelefone().isEmpty()) {
-                centro.setTelefone(centroAtualizado.getTelefone());
-            }
-        });
+        em.getTransaction().begin();
+        CentroDistribuicao centro = encontrarCentroDistribuicaoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Centro não encontrado"));
+        centro.setNome(centroAtualizado.getNome());
+        centro.setEndereco(centroAtualizado.getEndereco());
+        centro.setTelefone(centroAtualizado.getTelefone());
+        em.getTransaction().commit();
     }
-    
+
     public void deletarCentroDistribuicao(String nome) {
-        centros.removeIf(centro -> centro.getNome().equals(nome));
+        em.getTransaction().begin();
+        CentroDistribuicao centro = encontrarCentroDistribuicaoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Centro não encontrado"));
+        em.remove(centro);
+        em.getTransaction().commit();
     }
 }
