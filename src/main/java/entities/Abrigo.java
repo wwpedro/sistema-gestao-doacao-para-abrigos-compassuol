@@ -1,9 +1,11 @@
 package entities;
 
+@Entity
 public class Abrigo {
 	
-	
-    private String nome;
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String endereco;
     private String responsavel;
     private String telefone;
