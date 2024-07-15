@@ -1,23 +1,27 @@
 package main;
 
-import java.time.LocalDate;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Scanner;
-
 import entities.*;
 import services.DoacaoService;
+import utils.JPAUtil;
+
+import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 
 public class MenuDoacao {
     private Scanner scanner;
     private DoacaoService doacaoService;
+    private EntityManager em;
 
     public MenuDoacao(Scanner scanner) {
         this.scanner = scanner;
-        this.doacaoService = new DoacaoService();
+        this.em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        this.doacaoService = new DoacaoService(em);
     }
 
-    public void registrarItem() {
+    public void registrarItem(Doacao doacao) {
         System.out.print("Informe a descrição do item: ");
         String descricao = scanner.nextLine();
 
@@ -38,7 +42,7 @@ public class MenuDoacao {
         } else if (tipo.equalsIgnoreCase("Alimentos")) {
             System.out.print("Informe a quantidade: ");
             int quantidade = scanner.nextInt();
-            scanner.nextLine(); // consume the leftover newline
+            scanner.nextLine(); 
             System.out.print("Informe a unidade de medida (KG/ML/L): ");
             UnidadeMedidaAlimento unidadeMedida = UnidadeMedidaAlimento.valueOf(scanner.nextLine().toUpperCase());
             System.out.print("Informe a data de validade (yyyy-MM-dd): ");
@@ -51,41 +55,71 @@ public class MenuDoacao {
 
         System.out.print("Informe a quantidade a ser doada: ");
         int quantidade = scanner.nextInt();
-        scanner.nextLine(); // consume the leftover newline
-        doacaoService.adicionarItem(item, quantidade);
+        scanner.nextLine(); 
+
+        doacaoService.adicionarItem(doacao, item, quantidade);
         System.out.println("Item adicionado com sucesso.");
     }
 
-    public void listarItens() {
-        doacaoService.listarItens();
+    public void listarItens(Doacao doacao) {
+        System.out.println("=== Itens da Doação ===");
+        List<ItemDoacao> itens = doacaoService.listarItens(doacao);
+        for (ItemDoacao itemDoacao : itens) {
+            System.out.println(itemDoacao.getItem().getDescricao() + " - Quantidade: " + itemDoacao.getQuantidade());
+        }
     }
 
-    public void editarQuantidadeItem() {
+    public void editarQuantidadeItem(Doacao doacao) {
         System.out.print("Informe a descrição do item a ter a quantidade editada: ");
         String descricao = scanner.nextLine();
-        Optional<Map.Entry<Item, Integer>> itemOptional = doacaoService.encontrarItemPorDescricao(descricao);
+        Optional<ItemDoacao> itemOptional = doacaoService.encontrarItemPorDescricao(doacao, descricao);
 
         if (itemOptional.isPresent()) {
             System.out.print("Informe a nova quantidade: ");
             int novaQuantidade = scanner.nextInt();
-            scanner.nextLine(); // consume the leftover newline
-            doacaoService.editarQuantidadeItem(itemOptional.get().getKey(), novaQuantidade);
+            scanner.nextLine(); 
+            doacaoService.editarQuantidadeItem(doacao, itemOptional.get().getItem(), novaQuantidade);
             System.out.println("Quantidade do item editada com sucesso.");
         } else {
             System.out.println("Item não encontrado.");
         }
     }
 
-    public void removerItem() {
+    public void removerItem(Doacao doacao) {
         System.out.print("Informe a descrição do item a ser removido: ");
         String descricao = scanner.nextLine();
-        Optional<Map.Entry<Item, Integer>> itemOptional = doacaoService.encontrarItemPorDescricao(descricao);
+        Optional<ItemDoacao> itemOptional = doacaoService.encontrarItemPorDescricao(doacao, descricao);
 
         if (itemOptional.isPresent()) {
-            doacaoService.removerItem(itemOptional.get().getKey());
+            doacaoService.removerItem(doacao, itemOptional.get().getItem());
             System.out.println("Item removido com sucesso.");
         } else {
             System.out.println("Item não encontrado.");
+        }
+    }
+
+    public Doacao criarDoacao() {
+        Doacao doacao = new Doacao();
+        em.getTransaction().begin();
+        em.persist(doacao);
+        em.getTransaction().commit();
+        System.out.println("Doação criada com sucesso. ID: " + doacao.getId());
+        return doacao;
+    }
+
+    public Doacao carregarDoacao() {
+        System.out.print("Informe o ID da doação: ");
+        Long id = scanner.nextLong();
+        scanner.nextLine(); 
+        Optional<Doacao> doacaoOptional = doacaoService.encontrarDoacaoPorId(id);
+
+        if (doacaoOptional.isPresent()) {
+            Doacao doacao = doacaoOptional.get();
+            System.out.println("Doação carregada. ID: " + doacao.getId());
+            return doacao;
+        } else {
+            System.out.println("Doação não encontrada.");
+            return null;
         }
     }
 }

@@ -1,42 +1,80 @@
 package services;
 
-import entities.Doacao;
-import entities.Item;
-
-import java.util.Map;
+import entities.*;
+import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 public class DoacaoService {
-    private Doacao doacao;
+    private EntityManager em;
 
-    public DoacaoService() {
-        this.doacao = new Doacao();
+    public DoacaoService(EntityManager em) {
+        this.em = em;
     }
 
-    public void adicionarItem(Item item, int quantidade) {
-        Map<Item, Integer> itens = doacao.getItens();
-        itens.put(item, itens.getOrDefault(item, 0) + quantidade);
-    }
+    public void adicionarItem(Doacao doacao, Item item, int quantidade) {
+        try {
+            em.getTransaction().begin();
 
-    public void removerItem(Item item) {
-        doacao.getItens().remove(item);
-    }
+            em.persist(item);
 
-    public void editarQuantidadeItem(Item item, int novaQuantidade) {
-        if (doacao.getItens().containsKey(item)) {
-            doacao.getItens().put(item, novaQuantidade);
+            ItemDoacao itemDoacao = new ItemDoacao();
+            itemDoacao.setDoacao(doacao);
+            itemDoacao.setItem(item);
+            itemDoacao.setQuantidade(quantidade);
+
+            doacao.getItens().add(itemDoacao);
+            em.persist(itemDoacao);
+            em.merge(doacao);
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
         }
     }
 
-    public Optional<Map.Entry<Item, Integer>> encontrarItemPorDescricao(String descricao) {
-        return doacao.getItens().entrySet().stream()
-                .filter(entry -> entry.getKey().getDescricao().equalsIgnoreCase(descricao))
+    public List<ItemDoacao> listarItens(Doacao doacao) {
+        return em.createQuery("SELECT id FROM ItemDoacao id WHERE id.doacao = :doacao", ItemDoacao.class)
+                .setParameter("doacao", doacao)
+                .getResultList();
+    }
+
+    public Optional<ItemDoacao> encontrarItemPorDescricao(Doacao doacao, String descricao) {
+        return doacao.getItens().stream()
+                .filter(itemDoacao -> itemDoacao.getItem().getDescricao().equalsIgnoreCase(descricao))
                 .findFirst();
     }
 
-    public void listarItens() {
-        doacao.getItens().forEach((item, quantidade) -> {
-            System.out.println("Item: " + item + ", Quantidade: " + quantidade);
-        });
+    public Optional<Doacao> encontrarDoacaoPorId(Long id) {
+        Doacao doacao = em.find(Doacao.class, id);
+        return Optional.ofNullable(doacao);
+    }
+
+    public void editarQuantidadeItem(Doacao doacao, Item item, int novaQuantidade) {
+        ItemDoacao itemDoacao = em.createQuery(
+                "SELECT id FROM ItemDoacao id WHERE id.doacao = :doacao AND id.item = :item", ItemDoacao.class)
+                .setParameter("doacao", doacao)
+                .setParameter("item", item)
+                .getSingleResult();
+        itemDoacao.setQuantidade(novaQuantidade);
+
+        em.getTransaction().begin();
+        em.merge(itemDoacao);
+        em.getTransaction().commit();
+    }
+
+    public void removerItem(Doacao doacao, Item item) {
+        ItemDoacao itemDoacao = em.createQuery(
+                "SELECT id FROM ItemDoacao id WHERE id.doacao = :doacao AND id.item = :item", ItemDoacao.class)
+                .setParameter("doacao", doacao)
+                .setParameter("item", item)
+                .getSingleResult();
+
+        em.getTransaction().begin();
+        doacao.getItens().remove(itemDoacao);
+        em.remove(itemDoacao);
+        em.merge(doacao);
+        em.getTransaction().commit();
     }
 }

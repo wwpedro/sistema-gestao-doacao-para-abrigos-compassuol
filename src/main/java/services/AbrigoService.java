@@ -1,48 +1,52 @@
 package services;
 
-import java.util.ArrayList;
+import entities.Abrigo;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
-import entities.Abrigo;
-
 public class AbrigoService {
-    private List<Abrigo> abrigos = new ArrayList<>();
-    
+    private EntityManager em;
+
+    public AbrigoService(EntityManager em) {
+        this.em = em;
+    }
+
     public void registrarAbrigo(Abrigo abrigo) {
-        abrigos.add(abrigo);
+        em.getTransaction().begin();
+        em.persist(abrigo);
+        em.getTransaction().commit();
     }
-    
+
     public List<Abrigo> listarAbrigos() {
-        return abrigos;
+        TypedQuery<Abrigo> query = em.createQuery("FROM Abrigo", Abrigo.class);
+        return query.getResultList();
     }
-    
+
     public Optional<Abrigo> encontrarAbrigoPorNome(String nome) {
-        return abrigos.stream().filter(a -> a.getNome().equals(nome)).findFirst();
+        TypedQuery<Abrigo> query = em.createQuery("FROM Abrigo a WHERE a.nome = :nome", Abrigo.class);
+        query.setParameter("nome", nome);
+        return query.getResultList().stream().findFirst();
     }
-    
+
     public void editarAbrigo(String nome, Abrigo abrigoAtualizado) {
-        encontrarAbrigoPorNome(nome).ifPresent(abrigo -> {
-            if (abrigoAtualizado.getEndereco() != null && !abrigoAtualizado.getEndereco().isEmpty()) {
-                abrigo.setEndereco(abrigoAtualizado.getEndereco());
-            }
-            if (abrigoAtualizado.getResponsavel() != null && !abrigoAtualizado.getResponsavel().isEmpty()) {
-                abrigo.setResponsavel(abrigoAtualizado.getResponsavel());
-            }
-            if (abrigoAtualizado.getTelefone() != null && !abrigoAtualizado.getTelefone().isEmpty()) {
-                abrigo.setTelefone(abrigoAtualizado.getTelefone());
-            }
-            if (abrigoAtualizado.getEmail() != null && !abrigoAtualizado.getEmail().isEmpty()) {
-                abrigo.setEmail(abrigoAtualizado.getEmail());
-            }
-            if (abrigoAtualizado.getCapacidade() > 0) {
-                abrigo.setCapacidade(abrigoAtualizado.getCapacidade());
-            }
-        });
+        em.getTransaction().begin();
+        Abrigo abrigo = encontrarAbrigoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Abrigo não encontrado"));
+        abrigo.setNome(abrigoAtualizado.getNome());
+        abrigo.setEndereco(abrigoAtualizado.getEndereco());
+        abrigo.setResponsavel(abrigoAtualizado.getResponsavel());
+        abrigo.setTelefone(abrigoAtualizado.getTelefone());
+        abrigo.setEmail(abrigoAtualizado.getEmail());
+        abrigo.setCapacidade(abrigoAtualizado.getCapacidade());
+        em.getTransaction().commit();
     }
-    
+
     public void deletarAbrigo(String nome) {
-        abrigos.removeIf(abrigo -> abrigo.getNome().equals(nome));
+        em.getTransaction().begin();
+        Abrigo abrigo = encontrarAbrigoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Abrigo não encontrado"));
+        em.remove(abrigo);
+        em.getTransaction().commit();
     }
 }
-

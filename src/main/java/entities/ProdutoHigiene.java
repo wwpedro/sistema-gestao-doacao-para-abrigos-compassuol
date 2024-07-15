@@ -1,23 +1,28 @@
 package entities;
 
+import javax.persistence.Entity;
+
+@Entity
 public class ProdutoHigiene extends Item {
-    private TipoProdutoHigiene tipoProduto;
+    private TipoProdutoHigiene tipo;
 
-    public ProdutoHigiene(String descricao, TipoProdutoHigiene tipoProduto) {
-        super(descricao);
-        this.tipoProduto = tipoProduto;
+    // Construtor padrão
+    public ProdutoHigiene() {
+        super(); // Chamando o construtor padrão da superclasse
     }
 
-    public TipoProdutoHigiene getTipoProduto() {
-        return tipoProduto;
+    // Construtor com argumentos
+    public ProdutoHigiene(String descricao, TipoProdutoHigiene tipo) {
+        super(descricao); // Chamando o construtor com argumentos da superclasse
+        this.tipo = tipo;
     }
 
-    public void setTipoProduto(TipoProdutoHigiene tipoProduto) {
-        this.tipoProduto = tipoProduto;
+    // Getters e setters
+    public TipoProdutoHigiene getTipo() {
+        return tipo;
     }
 
-    @Override
-    public String toString() {
-        return "ProdutoHigiene [descricao=" + getDescricao() + ", tipoProduto=" + tipoProduto + "]";
+    public void setTipo(TipoProdutoHigiene tipo) {
+        this.tipo = tipo;
     }
 }

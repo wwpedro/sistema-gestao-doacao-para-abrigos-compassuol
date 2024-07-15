@@ -1,6 +1,8 @@
 package main;
 
 import java.util.Scanner;
+
+import entities.Doacao;
 import utils.JPAUtil;
 
 public class Menu {
@@ -18,6 +20,7 @@ public class Menu {
 
     public void exibirMenu() {
         int opcao;
+        Doacao doacao = null;
         do {
             System.out.println("---------------Menu---------------");
             System.out.println("1. Registrar Abrigo");
@@ -36,7 +39,7 @@ public class Menu {
             System.out.print("Escolha uma opção: ");
             opcao = scanner.nextInt();
             scanner.nextLine();
-            
+
             switch (opcao) {
                 case 1:
                     menuAbrigo.registrarAbrigo();
@@ -63,16 +66,26 @@ public class Menu {
                     menuCentro.deletarCentro();
                     break;
                 case 9:
-                    menuDoacao.registrarItem();
+                    doacao = menuDoacao.criarDoacao();
+                    menuDoacao.registrarItem(doacao);
                     break;
                 case 10:
-                    menuDoacao.listarItens();
+                    doacao = menuDoacao.carregarDoacao();
+                    if (doacao != null) {
+                        menuDoacao.listarItens(doacao);
+                    }
                     break;
                 case 11:
-                    menuDoacao.editarQuantidadeItem();
+                    doacao = menuDoacao.carregarDoacao();
+                    if (doacao != null) {
+                        menuDoacao.editarQuantidadeItem(doacao);
+                    }
                     break;
                 case 12:
-                    menuDoacao.removerItem();
+                    doacao = menuDoacao.carregarDoacao();
+                    if (doacao != null) {
+                        menuDoacao.removerItem(doacao);
+                    }
                     break;
                 case 0:
                     System.out.println("Programa encerrado");
@@ -82,9 +95,15 @@ public class Menu {
                     System.out.println("Opção inválida. Tente novamente.");
                     break;
             }
-            
+
         } while (opcao != 0);
-        
+
         scanner.close();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Menu menu = new Menu(scanner);
+        menu.exibirMenu();
     }
 }

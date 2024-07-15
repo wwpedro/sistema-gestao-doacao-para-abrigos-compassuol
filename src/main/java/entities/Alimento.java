@@ -1,12 +1,17 @@
 package entities;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
+@Entity
 public class Alimento extends Item {
     private int quantidade;
+    @Enumerated(EnumType.STRING)
     private UnidadeMedidaAlimento unidadeMedida;
     private LocalDate validade;
-
+    
+    public Alimento() {}
+    
     public Alimento(String descricao, int quantidade, UnidadeMedidaAlimento unidadeMedida, LocalDate validade) {
         super(descricao);
         this.quantidade = quantidade;

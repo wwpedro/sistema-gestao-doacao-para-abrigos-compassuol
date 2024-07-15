@@ -1,17 +1,22 @@
 package main;
 
-import java.util.Optional;
-import java.util.Scanner;
 import entities.Abrigo;
 import services.AbrigoService;
+import utils.JPAUtil;
+
+import javax.persistence.EntityManager;
+import java.util.Optional;
+import java.util.Scanner;
 
 public class MenuAbrigo {
     private Scanner scanner;
     private AbrigoService abrigoService;
+    private EntityManager em;
 
     public MenuAbrigo(Scanner scanner) {
         this.scanner = scanner;
-        this.abrigoService = new AbrigoService();
+        this.em = JPAUtil.getEntityManagerFactory().createEntityManager();
+        this.abrigoService = new AbrigoService(em);
     }
 
     public void registrarAbrigo() {
@@ -32,7 +37,7 @@ public class MenuAbrigo {
         
         System.out.print("Capacidade: ");
         int capacidade = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine();  
         
         Abrigo abrigo = new Abrigo(nome, endereco, responsavel, telefone, email, capacidade);
         abrigoService.registrarAbrigo(abrigo);
@@ -62,7 +67,7 @@ public class MenuAbrigo {
             System.out.println("6. Capacidade");
             System.out.print("Escolha uma opção: ");
             int campoOpcao = scanner.nextInt();
-            scanner.nextLine();
+            scanner.nextLine();  
             
             switch (campoOpcao) {
                 case 1:
@@ -98,7 +103,6 @@ public class MenuAbrigo {
                 case 6:
                     System.out.print("Nova Capacidade: ");
                     int novaCapacidade = scanner.nextInt();
-                    scanner.nextLine();
                     abrigo.setCapacidade(novaCapacidade);
                     break;
                     
@@ -134,4 +138,3 @@ public class MenuAbrigo {
         System.out.println(abrigo);
     }
 }
-

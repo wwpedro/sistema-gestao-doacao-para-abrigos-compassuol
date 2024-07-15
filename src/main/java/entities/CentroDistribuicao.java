@@ -15,7 +15,7 @@ public class CentroDistribuicao {
     private String endereco;
     private String telefone;
 
-    // Construtor padrão necessário para JPA
+    
     public CentroDistribuicao() {
     }
 
