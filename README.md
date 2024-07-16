@@ -55,29 +55,6 @@ public class JPAUtil {
 }
 
 ```
-## Funcionalidades
-
-- **Gerenciamento de Abrigos**
-  - Registrar novo abrigo
-  - Listar abrigos
-  - Editar informações de abrigo
-  - Deletar abrigo
-
-- **Gerenciamento de Centros de Distribuição**
-  - Registrar novo centro de distribuição
-  - Listar centros de distribuição
-  - Editar informações de centro de distribuição
-  - Deletar centro de distribuição
-
-- **Gerenciamento de Doações**
-  - Criar nova doação
-  - Registrar item na doação
-  - Listar itens de uma doação
-  - Editar quantidade de item na doação
-  - Remover item da doação
-
-- **Repassar Doações**
-  - Associar doações a um abrigo a partir de um centro de distribuição
 
 ## Projeto Maven
 
