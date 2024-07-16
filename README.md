@@ -13,7 +13,7 @@ O Desafio consistiu em criar é um projeto de um sistema de gerenciamento de doa
 
 ## Configuração do Banco de Dados
 
-É possivel configurar `persistence.xml` colcocando a porta correta do local host do mysql que é possivel acessar ao executar o xampp e colcar o mesmo "name" de persistence em util/JPAUtil.java
+É possivel configurar `persistence.xml` colcocando a porta correta do local host do mysql que é possivel acessar ao executar o xampp e o nome do banco de dados para o seu banco, altere sua senha e user caso necessário.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -22,16 +22,17 @@ O Desafio consistiu em criar é um projeto de um sistema de gerenciamento de doa
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 	version="2.1">
 
-	<persistence-unit name="persistence-unit-name">
+	<persistence-unit name="desafio">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<properties>
 			<property name="javax.persistence.jdbc.driver"
 				value="com.mysql.cj.jdbc.Driver" />
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:mysql://localhost:3307/NOME-BANCO?useSSL=false&amp;serverTimezone=UTC" />
-			<property name="javax.persistence.jdbc.user" value="root" /> //SEU USER
-			<property name="javax.persistence.jdbc.password" value="" /> //SUA SENHA
+				value="jdbc:mysql://localhost:3307/desafio1?useSSL=false&amp;serverTimezone=UTC" />
+			<property name="javax.persistence.jdbc.user" value="root" />
+			<property name="javax.persistence.jdbc.password" value="" />
 
+			<!-- Outras propriedades do Hibernate -->
 			<property name="hibernate.dialect"
 				value="org.hibernate.dialect.MySQL8Dialect" />
 			<property name="hibernate.show_sql" value="true" />
@@ -39,21 +40,6 @@ O Desafio consistiu em criar é um projeto de um sistema de gerenciamento de doa
 		</properties>
 	</persistence-unit>
 </persistence>
-```
-```JPAUtil
-
-public class JPAUtil {
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistence-unit-name");
-
-    public static EntityManagerFactory getEntityManagerFactory() {
-        return emf;
-    }
-
-    public static void close() {
-        emf.close();
-    }
-}
-
 ```
 
 ## Projeto Maven
