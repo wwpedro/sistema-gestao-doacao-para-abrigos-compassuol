@@ -5,6 +5,8 @@ import services.AbrigoService;
 import utils.JPAUtil;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -45,14 +47,20 @@ public class MenuAbrigo {
     }
 
     public void listarAbrigos() {
-        abrigoService.listarAbrigos().forEach(System.out::println);
+    	List<Abrigo> abrigos = abrigoService.listarAbrigos();
+
+        if (abrigos.isEmpty()) {
+            System.out.println("Não existem abrigos registrados no momento.");
+        } else {
+            abrigos.forEach(System.out::println);
+        }
     }
 
     public void editarAbrigo() {
-        System.out.print("Digite o nome do Abrigo a ser editado: ");
-        String nomeEditar = scanner.nextLine();
+        System.out.print("Digite o ID do Abrigo a ser editado: ");
+        Long id = scanner.nextLong();
         
-        Optional<Abrigo> abrigoOptional = abrigoService.encontrarAbrigoPorNome(nomeEditar);
+        Optional<Abrigo> abrigoOptional = abrigoService.encontrarAbrigoPorID(id);
         
         if (abrigoOptional.isPresent()) {
             Abrigo abrigo = abrigoOptional.get();
@@ -111,7 +119,7 @@ public class MenuAbrigo {
                     break;
             }
             
-            abrigoService.editarAbrigo(nomeEditar, abrigo);
+            abrigoService.editarAbrigo(id, abrigo);
             System.out.println("Abrigo atualizado com sucesso!");
             
         } else {
@@ -120,13 +128,13 @@ public class MenuAbrigo {
     }
 
     public void deletarAbrigo() {
-        System.out.print("Digite o nome do Abrigo a ser deletado: ");
-        String nomeDeletar = scanner.nextLine();
+        System.out.print("Digite o Id do Abrigo a ser deletado: ");
+        Long id = scanner.nextLong();
         
-        Optional<Abrigo> abrigoOptional = abrigoService.encontrarAbrigoPorNome(nomeDeletar);
+        Optional<Abrigo> abrigoOptional = abrigoService.encontrarAbrigoPorID(id);
         
         if (abrigoOptional.isPresent()) {
-            abrigoService.deletarAbrigo(nomeDeletar);
+            abrigoService.deletarAbrigo(id);
             System.out.println("Abrigo deletado com sucesso!");
         } else {
             System.out.println("Abrigo não encontrado.");
