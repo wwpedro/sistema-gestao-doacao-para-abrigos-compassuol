@@ -25,29 +25,132 @@ public class MenuDoacao {
         System.out.print("Informe a descrição do item: ");
         String descricao = scanner.nextLine();
 
-        System.out.print("Informe o tipo do item (Roupas, Produtos de Higiene, Alimentos): ");
-        String tipo = scanner.nextLine();
+        System.out.print("Informe o tipo do item (1-Roupa, 2-Higiene, 3-Alimentos): ");
+        int tipo = scanner.nextInt();
 
-        Item item;
-        if (tipo.equalsIgnoreCase("Roupas")) {
-            System.out.print("Informe o gênero (MASCULINO/FEMININO): ");
-            RoupaGenero genero = RoupaGenero.valueOf(scanner.nextLine().toUpperCase());
-            System.out.print("Informe o tamanho (INFANTIL/PP/P/M/G/GG): ");
-            RoupaTamanho tamanho = RoupaTamanho.valueOf(scanner.nextLine().toUpperCase());
-            item = new Roupa(descricao, genero, tamanho);
-        } else if (tipo.equalsIgnoreCase("Produtos de Higiene")) {
-            System.out.print("Informe o tipo do produto (ABSORVENTE/SABONETE/ESCOVA_DE_DENTE/PASTA_DE_DENTE): ");
-            TipoProdutoHigiene tipoProduto = TipoProdutoHigiene.valueOf(scanner.nextLine().toUpperCase());
-            item = new ProdutoHigiene(descricao, tipoProduto);
-        } else if (tipo.equalsIgnoreCase("Alimentos")) {
+        Item item = null;
+        
+        if (tipo == 1) {
+            RoupaGenero genero = null;
+            RoupaTamanho tamanho = null;
+
+            System.out.print("Informe o gênero (1-MASCULINO/2-FEMININO): ");
+            int opGenero = scanner.nextInt();
+
+            if (opGenero == 1) {
+                genero = RoupaGenero.MASCULINO;
+            } else if (opGenero == 2) {
+                genero = RoupaGenero.FEMININO;
+            } else {
+                System.out.println("Opção de gênero inválida. Operação cancelada.");
+                return;
+            }
+
+            System.out.print("Informe o tamanho (1-INFANTIL/2-PP/3-P/4-M/5-G/6-GG): ");
+            int opTamanho = scanner.nextInt();
+
+            switch (opTamanho) {
+                case 1:
+                    tamanho = RoupaTamanho.INFANTIL;
+                    break;
+                case 2:
+                    tamanho = RoupaTamanho.PP;
+                    break;
+                case 3:
+                    tamanho = RoupaTamanho.P;
+                    break;
+                case 4:
+                    tamanho = RoupaTamanho.M;
+                    break;
+                case 5:
+                    tamanho = RoupaTamanho.G;
+                    break;
+                case 6:
+                    tamanho = RoupaTamanho.GG;
+                    break;
+                default:
+                    System.out.println("Opção de tamanho inválida. Operação cancelada.");
+                    return;  
+            }
+
+            if (genero != null && tamanho != null) {
+                item = new Roupa(descricao, genero, tamanho);
+            } else {
+                System.out.println("Erro: Não foi possível criar a roupa. Verifique os dados inseridos.");
+            }
+        } 
+        
+        else if (tipo==2) {
+        	
+        	TipoProdutoHigiene tipoProduto=null;
+            System.out.print("Informe o tipo do produto (1-ABSORVENTE/2-SABONETE/3-ESCOVA_DE_DENTE/4-PASTA_DE_DENTE): ");
+            int opHigiene = scanner.nextInt();
+            
+            switch (opHigiene) {
+			case 1: {
+				tipoProduto = TipoProdutoHigiene.ABSORVENTE;
+				break;
+			}
+			case 2: {
+				tipoProduto = TipoProdutoHigiene.SABONETE;
+				break;
+			}
+			case 3: {
+				tipoProduto = TipoProdutoHigiene.ESCOVA_DE_DENTE;
+				break;
+			}
+			case 4: {
+				tipoProduto = TipoProdutoHigiene.PASTA_DE_DENTE;
+				break;
+			}
+			default:
+				System.out.println("Opção de tamanho inválida. Operação cancelada.");
+                return; 
+			}
+            
+            if(tipoProduto != null) {
+            	item = new ProdutoHigiene(descricao, tipoProduto);
+            }else {
+            	System.out.println("Erro: Não foi possível criar a Produto de Higiene. Verifique os dados inseridos.");
+            }        
+    
+        } 
+        
+        else if (tipo==3) {
             System.out.print("Informe a quantidade: ");
             int quantidade = scanner.nextInt();
             scanner.nextLine(); 
-            System.out.print("Informe a unidade de medida (KG/ML/L): ");
-            UnidadeMedidaAlimento unidadeMedida = UnidadeMedidaAlimento.valueOf(scanner.nextLine().toUpperCase());
+            
+            UnidadeMedidaAlimento unidadeMedida=null;
+            System.out.print("Informe a unidade de medida (1-KG/2-ML/3-L): ");
+            
+            int opAlimento = scanner.nextInt();
+            
+            switch (opAlimento) {
+			case 1: {
+				unidadeMedida = UnidadeMedidaAlimento.KG;
+				break;
+			}
+			case 2: {
+				unidadeMedida = UnidadeMedidaAlimento.ML;
+				break;
+			}
+			case 3: {
+				unidadeMedida = UnidadeMedidaAlimento.L;
+				break;
+			}
+			default:
+				System.out.println("Opção de tamanho inválida. Operação cancelada.");
+                return; 
+			}
+            
             System.out.print("Informe a data de validade (yyyy-MM-dd): ");
             LocalDate validade = LocalDate.parse(scanner.nextLine());
-            item = new Alimento(descricao, quantidade, unidadeMedida, validade);
+            
+            if(unidadeMedida!=null) {
+            	item = new Alimento(descricao, quantidade, unidadeMedida, validade);
+            }
+            
         } else {
             System.out.println("Tipo de item inválido.");
             return;
@@ -56,9 +159,13 @@ public class MenuDoacao {
         System.out.print("Informe a quantidade a ser doada: ");
         int quantidade = scanner.nextInt();
         scanner.nextLine(); 
-
-        doacaoService.adicionarItem(doacao, item, quantidade);
-        System.out.println("Item adicionado com sucesso.");
+        
+        if(item!=null) {
+        	doacaoService.adicionarItem(doacao, item, quantidade);
+        	System.out.println("Item adicionado com sucesso.");
+        }else {
+        	System.out.println("Erro ao adicionar Item.");
+        }
     }
 
     public void listarItens(Doacao doacao) {
@@ -93,7 +200,9 @@ public class MenuDoacao {
         if (itemOptional.isPresent()) {
             doacaoService.removerItem(doacao, itemOptional.get().getItem());
             System.out.println("Item removido com sucesso.");
-        } else {
+        } 
+        
+        else {
             System.out.println("Item não encontrado.");
         }
     }
