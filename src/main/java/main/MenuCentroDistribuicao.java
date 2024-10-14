@@ -19,8 +19,8 @@ public class MenuCentroDistribuicao {
     }
 
     public void registrarCentro() {
-        System.out.print("Nome do Centro de Distribuição: ");
-        String nome = scanner.nextLine();
+        System.out.print("Id do Centro de Distribuição: ");
+        String Id = scanner.nextLine();
         
         System.out.print("Endereço: ");
         String endereco = scanner.nextLine();
@@ -28,7 +28,7 @@ public class MenuCentroDistribuicao {
         System.out.print("Telefone: ");
         String telefone = scanner.nextLine();
         
-        CentroDistribuicao centro = new CentroDistribuicao(nome, endereco, telefone);
+        CentroDistribuicao centro = new CentroDistribuicao(Id, endereco, telefone);
         centroService.registrarCentroDistribuicao(centro);
         System.out.println("Centro de Distribuição registrado com sucesso!");
     }
@@ -38,10 +38,10 @@ public class MenuCentroDistribuicao {
     }
 
     public void editarCentro() {
-        System.out.print("Digite o nome do Centro de Distribuição a ser editado: ");
-        String nomeEditar = scanner.nextLine();
+        System.out.print("Digite o Id do Centro de Distribuição a ser editado: ");
+        Long id = scanner.nextLong();
         
-        Optional<CentroDistribuicao> centroOptional = centroService.encontrarCentroDistribuicaoPorNome(nomeEditar);
+        Optional<CentroDistribuicao> centroOptional = centroService.encontrarCentroDistribuicaoPorID(id);
         
         if (centroOptional.isPresent()) {
             CentroDistribuicao centro = centroOptional.get();
@@ -56,13 +56,12 @@ public class MenuCentroDistribuicao {
             scanner.nextLine();
             
             switch (campoOpcao) {
-                case 1:
-                    System.out.print("Novo Nome: ");
-                    String novoNome = scanner.nextLine();
-                    centro.setNome(novoNome);
-                    break;
-                    
-                case 2:
+	            case 1:
+	                System.out.print("Novo Nome: ");
+	                String novoNome = scanner.nextLine();
+	                centro.setNome(novoNome);
+	                break;
+            	case 2:
                     System.out.print("Novo Endereço: ");
                     String novoEndereco = scanner.nextLine();
                     centro.setEndereco(novoEndereco);
@@ -79,7 +78,7 @@ public class MenuCentroDistribuicao {
                     break;
             }
             
-            centroService.editarCentroDistribuicao(nomeEditar, centro);
+            centroService.editarCentroDistribuicao(id, centro);
             System.out.println("Centro de Distribuição atualizado com sucesso!");
             
         } else {
@@ -88,13 +87,13 @@ public class MenuCentroDistribuicao {
     }
 
     public void deletarCentro() {
-        System.out.print("Digite o nome do Centro de Distribuição a ser deletado: ");
-        String nomeDeletar = scanner.nextLine();
+        System.out.print("Digite o Id do Centro de Distribuição a ser deletado: ");
+        Long id = scanner.nextLong();
         
-        Optional<CentroDistribuicao> centroOptional = centroService.encontrarCentroDistribuicaoPorNome(nomeDeletar);
+        Optional<CentroDistribuicao> centroOptional = centroService.encontrarCentroDistribuicaoPorID(id);
         
         if (centroOptional.isPresent()) {
-            centroService.deletarCentroDistribuicao(nomeDeletar);
+            centroService.deletarCentroDistribuicao(id);
             System.out.println("Centro de Distribuição deletado com sucesso!");
         } else {
             System.out.println("Centro de Distribuição não encontrado.");
