@@ -24,24 +24,24 @@ public class CentroDistribuicaoService {
         return query.getResultList();
     }
 
-    public Optional<CentroDistribuicao> encontrarCentroDistribuicaoPorNome(String nome) {
-        TypedQuery<CentroDistribuicao> query = em.createQuery("FROM CentroDistribuicao c WHERE c.nome = :nome", CentroDistribuicao.class);
-        query.setParameter("nome", nome);
+    public Optional<CentroDistribuicao> encontrarCentroDistribuicaoPorID(Long id) {
+        TypedQuery<CentroDistribuicao> query = em.createQuery("FROM CentroDistribuicao c WHERE c.id = :id", CentroDistribuicao.class);
+        query.setParameter("id", id);
         return query.getResultList().stream().findFirst();
     }
 
-    public void editarCentroDistribuicao(String nome, CentroDistribuicao centroAtualizado) {
+    public void editarCentroDistribuicao(Long id, CentroDistribuicao centroAtualizado) {
         em.getTransaction().begin();
-        CentroDistribuicao centro = encontrarCentroDistribuicaoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Centro não encontrado"));
+        CentroDistribuicao centro = encontrarCentroDistribuicaoPorID(id).orElseThrow(() -> new IllegalArgumentException("Centro não encontrado"));
         centro.setNome(centroAtualizado.getNome());
         centro.setEndereco(centroAtualizado.getEndereco());
         centro.setTelefone(centroAtualizado.getTelefone());
         em.getTransaction().commit();
     }
 
-    public void deletarCentroDistribuicao(String nome) {
+    public void deletarCentroDistribuicao(Long id) {
         em.getTransaction().begin();
-        CentroDistribuicao centro = encontrarCentroDistribuicaoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Centro não encontrado"));
+		CentroDistribuicao centro = encontrarCentroDistribuicaoPorID(id).orElseThrow(() -> new IllegalArgumentException("Centro não encontrado"));
         em.remove(centro);
         em.getTransaction().commit();
     }
