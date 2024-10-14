@@ -25,15 +25,15 @@ public class AbrigoService {
         return query.getResultList();
     }
 
-    public Optional<Abrigo> encontrarAbrigoPorNome(String nome) {
-        TypedQuery<Abrigo> query = em.createQuery("FROM Abrigo a WHERE a.nome = :nome", Abrigo.class);
-        query.setParameter("nome", nome);
+    public Optional<Abrigo> encontrarAbrigoPorID(Long id) {
+    	
+        TypedQuery<Abrigo> query = em.createQuery("FROM Abrigo a WHERE a.id = :id", Abrigo.class);
+        query.setParameter("id", id);
         return query.getResultList().stream().findFirst();
     }
-
-    public void editarAbrigo(String nome, Abrigo abrigoAtualizado) {
+    public void editarAbrigo(Long id, Abrigo abrigoAtualizado) {
         em.getTransaction().begin();
-        Abrigo abrigo = encontrarAbrigoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Abrigo não encontrado"));
+        Abrigo abrigo = encontrarAbrigoPorID(id).orElseThrow(() -> new IllegalArgumentException("Abrigo não encontrado"));
         abrigo.setNome(abrigoAtualizado.getNome());
         abrigo.setEndereco(abrigoAtualizado.getEndereco());
         abrigo.setResponsavel(abrigoAtualizado.getResponsavel());
@@ -43,9 +43,9 @@ public class AbrigoService {
         em.getTransaction().commit();
     }
 
-    public void deletarAbrigo(String nome) {
+    public void deletarAbrigo(Long id) {
         em.getTransaction().begin();
-        Abrigo abrigo = encontrarAbrigoPorNome(nome).orElseThrow(() -> new IllegalArgumentException("Abrigo não encontrado"));
+        Abrigo abrigo = encontrarAbrigoPorID(id).orElseThrow(() -> new IllegalArgumentException("Abrigo não encontrado"));
         em.remove(abrigo);
         em.getTransaction().commit();
     }
