@@ -11,12 +11,14 @@ public class Abrigo {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
+	private String nome;
     private String endereco;
     private String responsavel;
     private String telefone;
     private String email;
     private int capacidade;
+    
+    public Abrigo() {}
     
 	public Abrigo(String nome, String endereco, String responsavel, String telefone, String email, int capacidade) {
 		super();
@@ -27,10 +29,10 @@ public class Abrigo {
 		this.email = email;
 		this.capacidade = capacidade;
 	}
-
+	
 	public Long getId() {
-        	return id;
-    	}
+        return id;
+    }
 
 	public String getNome() {
 		return nome;
@@ -82,7 +84,7 @@ public class Abrigo {
 	
 	@Override
     public String toString() {
-        return "Abrigo [nome=" + nome + ", endereco=" + endereco + ", responsavel=" + responsavel +
-               ", telefone=" + telefone + ", email=" + email + ", capacidade=" + capacidade + "]";
+        return "________________________\nAbrigo: "+nome +"\nId: "+id+ ", \nendereco: " + endereco + ", \nresponsavel: " + responsavel +
+               ", \ntelefone: " + telefone + ", \nemail: " + email + ", \ncapacidade: " + capacidade + "\n";
     }
 }
